@@ -11,6 +11,8 @@ pub fn movement(
     commands: &mut CommandBuffer,
 ) {
     if map.can_enter_tile(intention_to_move.destination) {
+        // adding a component that already exists will replace it instead
+        // this is how movement/entity positions get updated via the IntentionToMove message
         commands.add_component(intention_to_move.entity, intention_to_move.destination);
 
         if ecs
