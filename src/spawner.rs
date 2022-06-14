@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+const INITIAL_PLAYER_MAX_HEALTH: i32 = 20;
+
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push((
         Player,
@@ -7,6 +9,10 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
         Render {
             color: ColorPair::new(WHITE, BLACK),
             glyph: to_cp437('@'),
+        },
+        Health {
+            current: INITIAL_PLAYER_MAX_HEALTH,
+            max: INITIAL_PLAYER_MAX_HEALTH,
         },
     ));
 }
