@@ -46,6 +46,8 @@ impl GameState for State {
         ctx.cls();
 
         self.resources.insert(ctx.key);
+        ctx.set_active_console(0);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
 
         let current_turn_state = self.resources.get::<TurnState>().unwrap().clone();
 
@@ -67,9 +69,9 @@ impl GameState for State {
 
 impl State {
     fn new() -> Self {
-        let mut rng = RandomNumberGenerator::new();
         let mut ecs = World::default();
         let mut resources = Resources::default();
+        let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
 
         spawn_player(&mut ecs, map_builder.player_start);
@@ -105,7 +107,7 @@ fn main() -> BError {
         .with_font("terminal8x8.png", 8, 8)
         .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
-        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")
+        .with_simple_console_no_bg(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())
