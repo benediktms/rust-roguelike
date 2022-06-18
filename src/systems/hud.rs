@@ -5,7 +5,10 @@ use crate::prelude::*;
 #[read_component(Player)]
 pub fn hud(ecs: &SubWorld) {
     let mut health_query = <&Health>::query().filter(component::<Player>());
-    let player_health = health_query.iter(ecs).nth(0).unwrap();
+    let player_health = health_query
+        .iter(ecs)
+        .nth(0)
+        .expect("Player health not found");
 
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(2);
@@ -18,7 +21,7 @@ pub fn hud(ecs: &SubWorld) {
         ColorPair::new(RED, BLACK),
     );
     draw_batch.print_color_centered(
-        9,
+        0,
         format!("Health: {} / {}", player_health.current, player_health.max),
         ColorPair::new(WHITE, RED),
     );
