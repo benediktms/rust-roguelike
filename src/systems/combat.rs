@@ -2,6 +2,7 @@ use crate::prelude::*;
 
 #[system]
 #[read_component(IntentionToAttack)]
+#[write_component(Player)]
 #[write_component(Health)]
 pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
     let mut attackers = <(Entity, &IntentionToAttack)>::query();
@@ -12,6 +13,12 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
         .collect();
 
     targets.iter().for_each(|(message, target)| {
+        let is_player = ecs
+            .entry_ref(*target)
+            .unwrap()
+            .get_component::<Player>()
+            .is_ok();
+
         if let Ok(mut health) = ecs
             .entry_mut(*target)
             .unwrap()
@@ -20,7 +27,7 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
             println!("Health before attach: {}", health.current);
             health.current -= 1;
 
-            if health.current < 1 {
+            if health.current < 1 && !is_player {
                 commands.remove(*target);
             }
 
