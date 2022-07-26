@@ -23,7 +23,7 @@ impl MapBuilder {
         mb.build_corridors(rng);
         mb.player_start = mb.rooms[0].center();
 
-        let mut dijkstra_map = DijkstraMap::new(
+        let dijkstra_map = DijkstraMap::new(
             SCREEN_WIDTH,
             SCREEN_HEIGHT,
             &vec![mb.map.point2d_to_index(mb.player_start)],
