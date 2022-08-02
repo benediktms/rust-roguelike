@@ -1,10 +1,10 @@
 use crate::prelude::*;
-
 const NUM_ROOMS: usize = 20;
 
 pub struct MapBuilder {
     pub map: Map,
     pub rooms: Vec<Rect>,
+    pub monster_spawns: Vec<Point>,
     pub player_start: Point,
     pub amulet_start: Point,
 }
@@ -48,8 +48,9 @@ impl MapBuilder {
     }
 
     fn fill(&mut self, tile: TileType) {
-        self.map.tiles.iter_mut().for_each(|t| *t = tile)
+        return self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
+
 
     fn build_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
         while self.rooms.len() < NUM_ROOMS {
@@ -76,7 +77,7 @@ impl MapBuilder {
                     }
                 });
 
-                self.rooms.push(room)
+                self.rooms.push(room);
             }
         }
     }
