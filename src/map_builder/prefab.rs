@@ -1,6 +1,7 @@
 use crate::prelude::*;
 
 #[rustfmt::skip]
+#[allow(dead_code)]
 const FORTRESS: (&str, i32, i32) = ("
 ------------
 ---######---
@@ -53,5 +54,33 @@ pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
         }
 
         attempts += 1
+    }
+
+    if let Some(placement) = placement {
+        let string_vec: Vec<char> = FORTRESS
+            .0
+            .chars()
+            .filter(|a| *a != '\r' && *a != '\n')
+            .collect();
+
+        let mut i = 0;
+
+        for y in placement.y..placement.y + FORTRESS.2 {
+            for x in placement.x..placement.x + FORTRESS.1 {
+                let idx = map_idx(x, y);
+                let c = string_vec[i];
+
+                match c {
+                    'M' => {
+                        mb.map.tiles[idx] = TileType::Floor;
+                        mb.monster_spawns.push(Point::new(x, y));
+                    }
+                    '-' => mb.map.tiles[idx] = TileType::Floor,
+                    '#' => mb.map.tiles[idx] = TileType::Wall,
+                    _ => println!("Unknown tile `{}` found. Skipping", c),
+                }
+            }
+            i += 1;
+        }
     }
 }
