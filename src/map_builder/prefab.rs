@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
 #[rustfmt::skip]
-#[allow(dead_code)]
 const FORTRESS: (&str, i32, i32) = ("
 ------------
 ---######---
