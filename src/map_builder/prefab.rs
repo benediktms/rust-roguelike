@@ -31,8 +31,8 @@ pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
 
     while placement.is_none() && attempts < 10 {
         let dimensions = Rect::with_size(
-            rng.range(0, SCREEN_WIDTH),
-            rng.range(0, SCREEN_HEIGHT),
+            rng.range(0, SCREEN_WIDTH - FORTRESS.1),
+            rng.range(0, SCREEN_HEIGHT - FORTRESS.2),
             FORTRESS.1,
             FORTRESS.2,
         );
