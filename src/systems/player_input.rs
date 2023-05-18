@@ -4,6 +4,8 @@ use crate::prelude::*;
 #[read_component(Point)]
 #[read_component(Player)]
 #[read_component(Enemy)]
+#[read_component(Item)]
+#[read_component(Carried)]
 #[write_component(Health)]
 pub fn player_input(
     ecs: &mut SubWorld,
@@ -31,6 +33,25 @@ pub fn player_input(
             VirtualKeyCode::Numpad6 => Point::new(1, 0),
             VirtualKeyCode::Numpad8 => Point::new(0, -1),
             VirtualKeyCode::Numpad2 => Point::new(0, 1),
+            // player actions
+            VirtualKeyCode::G => {
+                let (player_entity, player_pos) = players
+                    .iter(ecs)
+                    .find_map(|(entity, pos)| Some((*entity, *pos)))
+                    .unwrap();
+                let mut items = <(Entity, &Item, &Point)>::query();
+                // TODO: I think this will pick up all items at the location at once
+                // probably there should be a way to pick up a specific item
+                items
+                    .iter(ecs)
+                    .filter(|(_e, _i, &item_pos)| item_pos == player_pos)
+                    .for_each(|(entity, _item, _item_pos)| {
+                        commands.remove_component::<Point>(*entity);
+                        commands.add_component(*entity, Carried(player_entity));
+                    });
+
+                Point::new(0, 0)
+            }
             // skip turn
             _ => Point::new(0, 0),
         };
