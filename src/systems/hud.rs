@@ -10,6 +10,8 @@ use crate::prelude::*;
 #[read_component(Name)]
 pub fn hud(ecs: &SubWorld) {
     let mut draw_batch = DrawBatch::new();
+    draw_batch.target(2);
+
     let mut health_query = <&Health>::query().filter(component::<Player>());
     let player_health = health_query
         .iter(ecs)
@@ -25,13 +27,11 @@ pub fn hud(ecs: &SubWorld) {
         .iter(ecs)
         .filter(|(_i, _n, carried)| carried.0 == player)
         .for_each(|(_i, name, _c)| {
-            draw_batch.target(3);
             draw_batch.print(Point::new(3, y), format!("{} : {}", y - 2, &name.0));
             y += 1;
         });
 
     if y > 3 {
-        draw_batch.target(3);
         draw_batch.print_color(
             Point::new(3, 2),
             "Items carried",
@@ -39,7 +39,6 @@ pub fn hud(ecs: &SubWorld) {
         );
     }
 
-    draw_batch.target(2);
     draw_batch.print_centered(1, "Explore the dungeon");
     draw_batch.bar_horizontal(
         Point::zero(),
