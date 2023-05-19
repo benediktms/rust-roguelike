@@ -70,6 +70,10 @@ pub fn player_input(
             .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
             .unwrap();
 
+        // TODO: this is not really useful anymore since health
+        // does not get restored every turn. There should be a different
+        // system that counts the number of turns and restores health
+        // after X number of turns
         let mut has_taken_action = false;
 
         if delta.x != 0 || delta.y != 0 {
@@ -100,16 +104,6 @@ pub fn player_input(
                 ));
             };
         };
-
-        if !has_taken_action {
-            if let Ok(mut health) = ecs
-                .entry_mut(player_entity)
-                .unwrap()
-                .get_component_mut::<Health>()
-            {
-                health.current = i32::min(health.max, health.current + 1)
-            }
-        }
 
         *turn_state = TurnState::PlayerTurn
     }
