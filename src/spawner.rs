@@ -5,7 +5,7 @@ const PLAYER_VIEW_DISTANCE: i32 = 8;
 
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push((
-        Player,
+        Player { map_level: 0 },
         pos,
         Render {
             color: ColorPair::new(WHITE, BLACK),

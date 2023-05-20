@@ -10,7 +10,7 @@ pub fn map_render(
     ecs: &SubWorld,
 ) {
     let mut fov = <&FieldOfView>::query().filter(component::<Player>());
-    let player_fov = fov.iter(ecs).nth(0).unwrap();
+    let player_fov = fov.iter(ecs).next().unwrap();
 
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(0);
@@ -21,6 +21,8 @@ pub fn map_render(
             let offset = Point::new(camera.left_x, camera.top_y);
             let idx = map_idx(x, y);
 
+            // FIXME: stairs seems to obstruct the view of the player
+            // this shoudln't happen
             if map.in_bounds(point)
                 && (player_fov.visible_tiles.contains(&point) | map.revealed_tiles[idx])
             {
@@ -37,6 +39,9 @@ pub fn map_render(
                         draw_batch.set(point - offset, ColorPair::new(tint, BLACK), glyph)
                     }
                     TileType::Wall => {
+                        draw_batch.set(point - offset, ColorPair::new(tint, BLACK), glyph)
+                    }
+                    TileType::Exit => {
                         draw_batch.set(point - offset, ColorPair::new(tint, BLACK), glyph)
                     }
                 };
