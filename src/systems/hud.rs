@@ -17,10 +17,18 @@ pub fn hud(ecs: &SubWorld) {
         .iter(ecs)
         .next()
         .expect("Player health not found");
-    let player = <(Entity, &Player)>::query()
+
+    let (player, map_level) = <(Entity, &Player)>::query()
         .iter(ecs)
-        .find_map(|(entity, _player)| Some(*entity))
+        .find_map(|(entity, player)| Some((*entity, player.map_level)))
         .unwrap();
+
+    draw_batch.print_color_right(
+        Point::new(SCREEN_WIDTH * 2, 1),
+        format!("Dungeon level: {}", map_level),
+        ColorPair::new(YELLOW, BLACK),
+    );
+
     let mut items_query = <(&Item, &Name, &Carried)>::query();
     let mut y = 3;
     items_query
