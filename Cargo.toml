@@ -8,3 +8,5 @@ version = "0.1.0"
 [dependencies]
 bracket-lib = { git = "https://github.com/amethyst/bracket-lib" }
 legion = "0.4.0"
+ron = "0.8.0"
+serde = "1.0.163"

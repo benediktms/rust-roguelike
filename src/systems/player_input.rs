@@ -40,14 +40,21 @@ pub fn player_input(
                     .find_map(|(entity, pos)| Some((*entity, *pos)))
                     .unwrap();
                 let mut items = <(Entity, &Item, &Point)>::query();
-                // TODO: I think this will pick up all items at the location at once
-                // probably there should be a way to pick up a specific item
                 items
                     .iter(ecs)
                     .filter(|(_e, _i, &item_pos)| item_pos == player_pos)
                     .for_each(|(entity, _item, _item_pos)| {
                         commands.remove_component::<Point>(*entity);
                         commands.add_component(*entity, Carried(player_entity));
+
+                        if let Ok(e) = ecs.entry_ref(*entity) {
+                            if e.get_component::<Weapon>().is_ok() {
+                                <(Entity, &Carried, &Weapon)>::query()
+                                    .iter(ecs)
+                                    .filter(|(_, c, _)| c.0 == player_entity)
+                                    .for_each(|(e, c, w)| commands.remove(*e));
+                            }
+                        }
                     });
 
                 Point::new(0, 0)
@@ -70,12 +77,6 @@ pub fn player_input(
             .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
             .unwrap();
 
-        // TODO: this is not really useful anymore since health
-        // does not get restored every turn. There should be a different
-        // system that counts the number of turns and restores health
-        // after X number of turns
-        let mut has_taken_action = false;
-
         if delta.x != 0 || delta.y != 0 {
             let mut has_target = false;
             enemies
@@ -83,7 +84,6 @@ pub fn player_input(
                 .filter(|(_, pos)| **pos == destination)
                 .for_each(|(entity, _)| {
                     has_target = true;
-                    has_taken_action = true;
                     commands.push((
                         (),
                         IntentionToAttack {
@@ -94,7 +94,6 @@ pub fn player_input(
                 });
 
             if !has_target {
-                has_taken_action = true;
                 commands.push((
                     (),
                     IntentionToMove {
@@ -114,6 +113,8 @@ fn use_item(n: usize, ecs: &mut SubWorld, commands: &mut CommandBuffer) -> Point
         .iter(ecs)
         .find_map(|(entity, _)| Some(*entity))
         .unwrap();
+
+    // FIXME: the player can currently 'use' weapons, which consumes them but does nothing
 
     let item_entity = <(Entity, &Item, &Carried)>::query()
         .iter(ecs)
