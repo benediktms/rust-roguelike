@@ -70,12 +70,6 @@ pub fn player_input(
             .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
             .unwrap();
 
-        // TODO: this is not really useful anymore since health
-        // does not get restored every turn. There should be a different
-        // system that counts the number of turns and restores health
-        // after X number of turns
-        let mut has_taken_action = false;
-
         if delta.x != 0 || delta.y != 0 {
             let mut has_target = false;
             enemies
@@ -83,7 +77,6 @@ pub fn player_input(
                 .filter(|(_, pos)| **pos == destination)
                 .for_each(|(entity, _)| {
                     has_target = true;
-                    has_taken_action = true;
                     commands.push((
                         (),
                         IntentionToAttack {
@@ -94,7 +87,6 @@ pub fn player_input(
                 });
 
             if !has_target {
-                has_taken_action = true;
                 commands.push((
                     (),
                     IntentionToMove {
